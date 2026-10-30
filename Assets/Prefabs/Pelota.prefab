@@ -162,3 +162,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocidadInicial: 10
+  esBolaFuego: 0

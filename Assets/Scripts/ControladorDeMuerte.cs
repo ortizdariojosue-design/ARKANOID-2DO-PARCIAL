@@ -10,16 +10,25 @@ public class ControladorMuerte : MonoBehaviour
     {
         if (collision.CompareTag("Pelota"))
         {
-            vidasJugador--;
-            Debug.Log("Vidas restantes: " + vidasJugador);
+            GameObject[] pelotasActuales = GameObject.FindGameObjectsWithTag("Pelota");
 
-            if (vidasJugador > 0)
+            if (pelotasActuales.Length > 1)
             {
-                ReiniciarPelota(collision.gameObject);
+                Destroy(collision.gameObject);
             }
             else
             {
-                SceneManager.LoadScene("PantallaDerrota");
+                vidasJugador--;
+                Debug.Log("Vidas restantes: " + vidasJugador);
+
+                if (vidasJugador > 0)
+                {
+                    ReiniciarPelota(collision.gameObject);
+                }
+                else
+                {
+                    SceneManager.LoadScene("PantallaDerrota");
+                }
             }
         }
     }
@@ -30,6 +39,13 @@ public class ControladorMuerte : MonoBehaviour
         
         if (player != null)
         {
+            // Limpia los power-ups de la paleta al perder una vida
+            Player scriptPlayer = player.GetComponent<Player>();
+            if (scriptPlayer != null)
+            {
+                scriptPlayer.ReiniciarEstadoPlayer();
+            }
+
             ControladorDePelota controlPelota = pelota.GetComponent<ControladorDePelota>();
             if (controlPelota != null)
             {

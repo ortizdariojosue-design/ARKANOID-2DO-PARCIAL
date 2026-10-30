@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6961985503550898854}
   m_Layer: 0
   m_Name: Bloque3Vida
-  m_TagString: Untagged
+  m_TagString: Bloque
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,4 +144,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vida: 3
-  "colorDa\xF1ado": {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  "colorDa\xF1ado": {r: 1, g: 0.6179246, b: 0.9370873, a: 1}
+  prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
+  prefabsPowerUps:
+  - {fileID: 2096151511155483817, guid: 44baa297279c34149943ce1b10a8560c, type: 3}
+  - {fileID: 6351041399501296497, guid: c962a8ae35faa4846b209ec33da5e604, type: 3}
+  - {fileID: 2613705956770851223, guid: 0f36f1d9af8882643b6c5440d7aff4b9, type: 3}
+  probabilidadPowerUp: 100

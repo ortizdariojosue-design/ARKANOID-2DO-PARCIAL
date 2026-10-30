@@ -65,9 +65,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\ControladorDeMuerte.cs" />
-    <Compile Include="Assets\Scripts\ControladorDeBloques.cs" />
+    <Compile Include="Assets\Scripts\GeneradorDeNivel.cs" />
+    <Compile Include="Assets\Scripts\CamaraShake.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\PowerUp.cs" />
     <Compile Include="Assets\Scripts\ControladorDePelota.cs" />
+    <Compile Include="Assets\Scripts\ControladorDeBloque.cs" />
+    <Compile Include="Assets\Scripts\ProyectilLaser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
