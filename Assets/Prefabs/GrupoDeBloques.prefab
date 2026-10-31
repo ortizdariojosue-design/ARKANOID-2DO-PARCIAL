@@ -144,8 +144,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vida: 5
-  "colorDa\xF1ado": {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  "colorDa\xF1ado": {r: 1, g: 0.015686274, b: 0.166595, a: 1}
   prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
+  prefabsPowerUps: []
+  probabilidadPowerUp: 100
 --- !u!1 &737805402199127886
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,8 +292,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vida: 3
-  "colorDa\xF1ado": {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  "colorDa\xF1ado": {r: 1, g: 0, b: 0.90821266, a: 1}
   prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
+  prefabsPowerUps: []
+  probabilidadPowerUp: 100
 --- !u!1 &1979534324338084190
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +324,7 @@ Transform:
   m_GameObject: {fileID: 1979534324338084190}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.08, y: -0.19, z: 0.031245586}
+  m_LocalPosition: {x: -8.08, y: 0.01, z: 0.031245586}
   m_LocalScale: {x: 1, y: 0.4615, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -436,8 +440,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vida: 2
-  "colorDa\xF1ado": {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  "colorDa\xF1ado": {r: 1, g: 0.6175299, b: 0, a: 1}
   prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
+  prefabsPowerUps: []
+  probabilidadPowerUp: 100
 --- !u!1 &3816912804488898041
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,7 +459,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &36421177864442448
 Transform:
   m_ObjectHideFlags: 0
@@ -620,6 +626,11 @@ MonoBehaviour:
   vida: 1
   "colorDa\xF1ado": {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
+  prefabsPowerUps:
+  - {fileID: 2096151511155483817, guid: 44baa297279c34149943ce1b10a8560c, type: 3}
+  - {fileID: 6351041399501296497, guid: c962a8ae35faa4846b209ec33da5e604, type: 3}
+  - {fileID: 2613705956770851223, guid: 0f36f1d9af8882643b6c5440d7aff4b9, type: 3}
+  probabilidadPowerUp: 100
 --- !u!1 &9153993527220724508
 GameObject:
   m_ObjectHideFlags: 0
@@ -764,5 +775,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vida: 4
-  "colorDa\xF1ado": {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  "colorDa\xF1ado": {r: 0.015686274, g: 1, b: 0.12996963, a: 1}
   prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
+  prefabsPowerUps: []
+  probabilidadPowerUp: 100

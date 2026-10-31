@@ -5,13 +5,14 @@ public class Player : MonoBehaviour
 {
     [Header("Configuración de Movimiento")]
     [SerializeField] private float velocidadMovimiento = 10f;
-    [SerializeField] private float limiteX = 7.5f;
+    [SerializeField] private float bordeParedX = 7.5f; 
 
     [Header("Power-up Agrandar")]
     [SerializeField] private float escalaAmpliada = 1.5f;
     [SerializeField] private float duracionPowerUp = 5f;
     private Vector3 escalaOriginal;
     private Coroutine corrutinaEfecto;
+    private BoxCollider2D boxCollider;
 
     [Header("Power-up Láser")]
     [SerializeField] private GameObject prefabLaser; 
@@ -22,13 +23,23 @@ public class Player : MonoBehaviour
     void Start()
     {
         escalaOriginal = transform.localScale;
+        boxCollider = GetComponent<BoxCollider2D>();
     }
 
     void Update()
     {
         float entradaX = Input.GetAxis("Horizontal");
         Vector3 nuevaPosicion = transform.position + Vector3.right * (entradaX * velocidadMovimiento * Time.deltaTime);
-        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, -limiteX, limiteX);
+        
+        float mitadAnchoReal = 1f;
+        if (boxCollider != null)
+        {
+            mitadAnchoReal = boxCollider.bounds.extents.x;
+        }
+
+        float limiteActualX = bordeParedX - mitadAnchoReal;
+        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, -limiteActualX, limiteActualX);
+        
         transform.position = nuevaPosicion;
 
         if (tieneLaser && Input.GetKeyDown(KeyCode.Space))
@@ -74,7 +85,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Método para limpiar los power-ups de la paleta al perder una vida
     public void ReiniciarEstadoPlayer()
     {
         if (corrutinaEfecto != null)

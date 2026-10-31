@@ -83,8 +83,6 @@ public class ControladorDePelota : MonoBehaviour
     public void ReiniciarEnPaleta(Transform playerTransform)
     {
         estaIniciado = false;
-        
-        // Apagamos la bola de fuego y restauramos el color blanco al perder/reiniciar
         esBolaFuego = false;
         if (spriteRenderer != null) spriteRenderer.color = Color.white;
         if (corrutinaFuego != null)
@@ -98,7 +96,7 @@ public class ControladorDePelota : MonoBehaviour
         playerTransform.position = posicionPlayer;
         
         transform.SetParent(playerTransform);
-        transform.localPosition = new Vector3(0f, 1.8f, 0f); 
+        transform.localPosition = new Vector3(0f, 0.6f, 0f); 
         rb.velocity = Vector2.zero;
         rb.simulated = false; 
     }      
