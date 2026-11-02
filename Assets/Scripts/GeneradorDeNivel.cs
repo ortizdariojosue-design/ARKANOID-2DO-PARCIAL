@@ -10,6 +10,9 @@ public class GeneradorDeNivel : MonoBehaviour
     [SerializeField] private float separacionY = 0.6f;
     [SerializeField] private Vector2 posicionInicial = new Vector2(-5.5f, 4f);
 
+    [Header("Configuración de Power-ups por Nivel")]
+    [Range(0f, 100f)][SerializeField] private float probabilidadPowerUpNivel = 20f;
+
     void Start()
     {
         GenerarGrilla();
@@ -17,6 +20,8 @@ public class GeneradorDeNivel : MonoBehaviour
 
     void GenerarGrilla()
     {
+        if (prefabsBloques == null || prefabsBloques.Length == 0) return;
+
         for (int fila = 0; fila < filas; fila++)
         {
             for (int columna = 0; columna < columnas; columna++)
@@ -27,7 +32,13 @@ public class GeneradorDeNivel : MonoBehaviour
                 float posY = posicionInicial.y - (fila * separacionY);
                 Vector3 posicionBloque = new Vector3(posX, posY, 0f);
 
-                Instantiate(prefabAUsar, posicionBloque, Quaternion.identity, transform);
+                GameObject nuevoBloque = Instantiate(prefabAUsar, posicionBloque, Quaternion.identity, transform);
+
+                ControladorDeBloque scriptBloque = nuevoBloque.GetComponent<ControladorDeBloque>();
+                if (scriptBloque != null)
+                {
+                    scriptBloque.ConfigurarProbabilidad(probabilidadPowerUpNivel);
+                }
             }
         }
     }

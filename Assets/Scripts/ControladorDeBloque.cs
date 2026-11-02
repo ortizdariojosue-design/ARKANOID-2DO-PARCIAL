@@ -14,7 +14,12 @@ public class ControladorDeBloque : MonoBehaviour
 
     [Header("Power-ups")]
     [SerializeField] private GameObject[] prefabsPowerUps; 
-    [Range(0f, 100f)][SerializeField] private float probabilidadPowerUp = 20f;
+    private float probabilidadPowerUp = 20f; 
+
+    public void ConfigurarProbabilidad(float nuevaProbabilidad)
+    {
+        probabilidadPowerUp = nuevaProbabilidad;
+    }
 
     void Start()
     {
@@ -27,7 +32,6 @@ public class ControladorDeBloque : MonoBehaviour
         {
             ControladorDePelota pelota = collision.gameObject.GetComponent<ControladorDePelota>();
             
-            // Si la pelota es de fuego, lo destruye de un golpe. Si no, le quita 1 vida.
             if (pelota != null && pelota.esBolaFuego)
             {
                 vida = 0;

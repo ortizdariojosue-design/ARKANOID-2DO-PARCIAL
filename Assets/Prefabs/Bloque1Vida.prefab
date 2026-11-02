@@ -151,4 +151,4 @@ MonoBehaviour:
   - {fileID: 6351041399501296497, guid: c962a8ae35faa4846b209ec33da5e604, type: 3}
   - {fileID: 2613705956770851223, guid: 0f36f1d9af8882643b6c5440d7aff4b9, type: 3}
   - {fileID: 8454435404405192805, guid: c1f8f9461d1a0ea4884d460084977c0d, type: 3}
-  probabilidadPowerUp: 100
+  probabilidadPowerUp: 50

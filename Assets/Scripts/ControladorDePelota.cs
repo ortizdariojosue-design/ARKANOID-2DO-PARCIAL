@@ -3,13 +3,11 @@ using System.Collections;
 
 public class ControladorDePelota : MonoBehaviour
 {
-    [Header("Configuración")]
     [SerializeField] private float velocidadInicial = 10f;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private bool estaIniciado = false;
     
-    [Header("Bola de Fuego")]
     public bool esBolaFuego = false;
     private Vector2 velocidadGuardada; 
     private Coroutine corrutinaFuego;
@@ -72,10 +70,12 @@ public class ControladorDePelota : MonoBehaviour
     {
         if (estaIniciado)
         {
-            if (Mathf.Abs(rb.velocity.y) < 2f) 
+            if (Mathf.Abs(rb.velocity.y) < 3f) 
             {
-                float dirY = rb.velocity.y > 0 ? 2f : -2f; 
-                rb.velocity = new Vector2(rb.velocity.x, dirY).normalized * velocidadInicial; 
+                float dirY = rb.velocity.y >= 0 ? 1f : -1f;
+                Vector2 velocidadActual = rb.velocity;
+                velocidadActual.y = dirY * 4f; 
+                rb.velocity = velocidadActual.normalized * velocidadInicial;
             }                                         
         }
     }
@@ -103,7 +103,10 @@ public class ControladorDePelota : MonoBehaviour
 
     public void DuplicarPelota()
     {
-        GameObject nuevaPelota = Instantiate(gameObject, transform.position, Quaternion.identity);
+        Vector3 posicionSpawn = transform.position + new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), 0f);
+
+        GameObject nuevaPelota = Instantiate(gameObject, posicionSpawn, Quaternion.identity);
+        ControladorDePelota scriptNuevaPelota = nuevaPelota.GetComponent<ControladorDePelota>();
         Rigidbody2D rbNueva = nuevaPelota.GetComponent<Rigidbody2D>();
         
         if (rbNueva != null)
@@ -111,7 +114,23 @@ public class ControladorDePelota : MonoBehaviour
             float fuerzaX = Random.Range(-5f, 5f);
             float fuerzaY = Random.Range(5f, 8f);
             rbNueva.velocity = new Vector2(fuerzaX, fuerzaY).normalized * velocidadInicial; 
-        }                                                                                                      
+        }
+
+        if (scriptNuevaPelota != null)
+        {
+            scriptNuevaPelota.esBolaFuego = this.esBolaFuego;
+            
+            SpriteRenderer srNueva = nuevaPelota.GetComponent<SpriteRenderer>();
+            if (srNueva != null)
+            {
+                srNueva.color = this.esBolaFuego ? Color.red : Color.white;
+            }
+
+            if (this.esBolaFuego)
+            {
+                scriptNuevaPelota.ActivarBolaFuego(3f);
+            }
+        }
     }
 
     public void ActivarBolaFuego(float duracion)

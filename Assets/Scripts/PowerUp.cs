@@ -34,22 +34,40 @@ public class PowerUp : MonoBehaviour
                         break;
                     
                     case TipoPowerUp.Multibola:
-                        foreach (var pelota in pelotasActuales)
+                        if (pelotasActuales.Length > 0)
                         {
-                            if (pelota != null && pelota.esBolaFuego)
-                            {
-                                pelota.esBolaFuego = false;
-                                SpriteRenderer sr = pelota.GetComponent<SpriteRenderer>();
-                                if (sr != null) sr.color = Color.white;
-                            }
-                        }
+                            ControladorDePelota pelotaBase = pelotasActuales[0];
+                            bool habiaFuegoActivo = false;
 
-                        if (pelotasActuales.Length > 0 && pelotasActuales[0] != null)
-                        {
+                            foreach (var p in pelotasActuales)
+                            {
+                                if (p != null && p.esBolaFuego)
+                                {
+                                    pelotaBase = p;
+                                    habiaFuegoActivo = true;
+                                    break;
+                                }
+                            }
+
                             int pelotasFaltantes = 3 - pelotasActuales.Length;
                             for (int i = 0; i < pelotasFaltantes; i++)
                             {
-                                pelotasActuales[0].DuplicarPelota();
+                                if (pelotaBase != null)
+                                {
+                                    pelotaBase.DuplicarPelota();
+                                }
+                            }
+
+                            if (habiaFuegoActivo)
+                            {
+                                ControladorDePelota[] todasLasPelotas = FindObjectsOfType<ControladorDePelota>();
+                                foreach (var pelota in todasLasPelotas)
+                                {
+                                    if (pelota != null && !pelota.esBolaFuego)
+                                    {
+                                        pelota.ActivarBolaFuego(3f);
+                                    }
+                                }
                             }
                         }
                         break;
@@ -59,15 +77,11 @@ public class PowerUp : MonoBehaviour
                         break;
 
                     case TipoPowerUp.BolaFuego:
-                        if (pelotasActuales.Length > 0)
+                        foreach (var pelota in pelotasActuales)
                         {
-                            pelotasActuales[0].ActivarBolaFuego(5f);
-                            for (int i = 1; i < pelotasActuales.Length; i++)
+                            if (pelota != null)
                             {
-                                if (pelotasActuales[i] != null)
-                                {
-                                    Destroy(pelotasActuales[i].gameObject);
-                                }
+                                pelota.ActivarBolaFuego(3f);
                             }
                         }
                         break;

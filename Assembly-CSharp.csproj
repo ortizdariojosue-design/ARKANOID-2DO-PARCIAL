@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\ControladorDeMuerte.cs" />
+    <Compile Include="Assets\Scripts\GestorDeFondo.cs" />
     <Compile Include="Assets\Scripts\MenuPrincipal.cs" />
     <Compile Include="Assets\Scripts\ControladorPausa.cs" />
     <Compile Include="Assets\Scripts\GeneradorDeNivel.cs" />

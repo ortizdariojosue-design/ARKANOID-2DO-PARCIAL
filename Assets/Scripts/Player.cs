@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     [Header("Power-up Láser")]
     [SerializeField] private GameObject prefabLaser; 
     [SerializeField] private float duracionLaser = 5f;
+    [SerializeField] private float cadenciaDisparo = 0.4f; 
     private bool tieneLaser = false;
     private Coroutine corrutinaLaser;
 
@@ -41,11 +42,6 @@ public class Player : MonoBehaviour
         nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, -limiteActualX, limiteActualX);
         
         transform.position = nuevaPosicion;
-
-        if (tieneLaser && Input.GetKeyDown(KeyCode.Space))
-        {
-            DispararLaser();
-        }
     }
 
     public void AgrandarPaleta()
@@ -71,7 +67,14 @@ public class Player : MonoBehaviour
     private IEnumerator EfectoLaser()
     {
         tieneLaser = true;
-        yield return new WaitForSeconds(duracionLaser);
+        float tiempoTranscurrido = 0f;
+        while (tiempoTranscurrido < duracionLaser)
+        {
+            DispararLaser();
+            yield return new WaitForSeconds(cadenciaDisparo);
+            tiempoTranscurrido += cadenciaDisparo;
+        }
+
         tieneLaser = false;
         corrutinaLaser = null;
     }
