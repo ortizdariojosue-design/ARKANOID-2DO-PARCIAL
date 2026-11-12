@@ -145,4 +145,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocidadCaida: 3
   tipo: 3
-  puntosBonus: 500
+  puntosBonus: 200

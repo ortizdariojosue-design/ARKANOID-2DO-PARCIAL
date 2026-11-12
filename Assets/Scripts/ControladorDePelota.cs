@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class ControladorDePelota : MonoBehaviour
 {
@@ -11,7 +10,6 @@ public class ControladorDePelota : MonoBehaviour
     
     public bool esBolaFuego = false;
     private Vector2 velocidadGuardada; 
-    private Coroutine corrutinaFuego;
     private float tiempoAtrapada = 0f; 
 
     void Awake()
@@ -148,13 +146,7 @@ public class ControladorDePelota : MonoBehaviour
     public void ReiniciarEnPaleta(Transform playerTransform)
     {
         estaIniciado = false;
-        esBolaFuego = false;
-        if (spriteRenderer != null) spriteRenderer.color = Color.white;
-        if (corrutinaFuego != null)
-        {
-            StopCoroutine(corrutinaFuego);
-            corrutinaFuego = null;
-        }
+        DesactivarBolaFuego();
 
         Player scriptPlayer = playerTransform.GetComponent<Player>();
         Vector3 posicionPlayer = playerTransform.position;
@@ -191,40 +183,32 @@ public class ControladorDePelota : MonoBehaviour
         {
             scriptNuevaPelota.IgnorarColisionesEntrePelotas();
             scriptNuevaPelota.estaIniciado = true;
-            scriptNuevaPelota.corrutinaFuego = null;
-            scriptNuevaPelota.esBolaFuego = false;
             scriptNuevaPelota.posicionLocalInicial = this.posicionLocalInicial;
 
-            SpriteRenderer srNueva = nuevaPelota.GetComponent<SpriteRenderer>();
-            if (srNueva != null)
-            {
-                srNueva.color = Color.white;
-            }
-
+            // Si la bola original era de fuego, la nueva hereda el fuego permanente
             if (this.esBolaFuego)
             {
-                scriptNuevaPelota.ActivarBolaFuego(3f);
+                scriptNuevaPelota.ActivarBolaFuego();
+            }
+            else
+            {
+                scriptNuevaPelota.DesactivarBolaFuego();
             }
         }
     }
 
-    public bool ActivarBolaFuego(float duracion)
+    public bool ActivarBolaFuego()
     {
         if (esBolaFuego) return false;
 
-        corrutinaFuego = StartCoroutine(RutinaFuego(duracion));
+        esBolaFuego = true;
+        if (spriteRenderer != null) spriteRenderer.color = Color.red;
         return true;
     }
 
-    private IEnumerator RutinaFuego(float duracion)
+    public void DesactivarBolaFuego()
     {
-        esBolaFuego = true;
-        if (spriteRenderer != null) spriteRenderer.color = Color.red; 
-        
-        yield return new WaitForSeconds(duracion);
-        
         esBolaFuego = false;
-        if (spriteRenderer != null) spriteRenderer.color = Color.white; 
-        corrutinaFuego = null;
+        if (spriteRenderer != null) spriteRenderer.color = Color.white;
     }
 }

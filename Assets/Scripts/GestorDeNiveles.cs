@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class GestorDeNiveles : MonoBehaviour
 {
+    [Header("Escena Destino Post-Caos")]
+    [SerializeField] private string escenaMenuPrincipal = "MenuPrincipal"; 
+
     void Update()
     {
         ControladorDeBloque[] bloquesRestantes = FindObjectsOfType<ControladorDeBloque>();
@@ -11,7 +14,11 @@ public class GestorDeNiveles : MonoBehaviour
         {
             string escenaActual = SceneManager.GetActiveScene().name;
 
-            if (escenaActual == "Nivel1")
+            if (escenaActual == "Tutorial")
+            {
+                SceneManager.LoadScene("Nivel1");
+            }
+            else if (escenaActual == "Nivel1")
             {
                 SceneManager.LoadScene("Nivel2");
             }
@@ -21,7 +28,11 @@ public class GestorDeNiveles : MonoBehaviour
             }
             else if (escenaActual == "Nivel3")
             {
-                SceneManager.LoadScene("PantallaVictoria");
+                SceneManager.LoadScene("PantallaVictoria"); 
+            }
+            else if (escenaActual == "NivelCaos")
+            {
+                SceneManager.LoadScene(escenaMenuPrincipal);
             }
         }
     }

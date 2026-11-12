@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class ControladorDeBloque : MonoBehaviour
 {
@@ -25,6 +27,23 @@ public class ControladorDeBloque : MonoBehaviour
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Si estamos en el Nivel Caos, filtramos los power-ups para que nunca salga VidaExtra
+        if (SceneManager.GetActiveScene().name == "NivelCaos")
+        {
+            if (prefabsPowerUps != null && prefabsPowerUps.Length > 0)
+            {
+                List<GameObject> listaFiltrada = new List<GameObject>();
+                foreach (var p in prefabsPowerUps)
+                {
+                    if (p != null && !p.name.Contains("VidaExtra"))
+                    {
+                        listaFiltrada.Add(p);
+                    }
+                }
+                prefabsPowerUps = listaFiltrada.ToArray();
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

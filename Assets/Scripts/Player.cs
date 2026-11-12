@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
     [Header("Configuración de Movimiento")]
     [SerializeField] private float velocidadMovimiento = 10f;
+    [SerializeField] private bool permitirControlMouse = true;
     [SerializeField] private Collider2D paredIzquierda;
     [SerializeField] private Collider2D paredDerecha;
     [SerializeField] private float limiteIzquierdoX = -8.2f;
@@ -12,16 +14,17 @@ public class Player : MonoBehaviour
 
     public float CentroX { get; private set; } = 0f;
 
-    [Header("Power-up Agrandar")]
+    [Header("Power-up Agrandar (Permanente hasta morir o cambiar poder)")]
     [SerializeField] private float escalaAmpliada = 1.5f;
-    [SerializeField] private float duracionPowerUp = 5f;
     private Vector3 escalaOriginal;
-    private Coroutine corrutinaEfecto;
+    private bool estaAgrandada = false;
     private BoxCollider2D boxCollider;
+    private Vector3 ultimaPosicionMouse;
+    private bool usandoMouse = false;
 
-    [Header("Power-up Láser")]
+    [Header("Power-up Láser (Temporal)")]
     [SerializeField] private GameObject prefabLaser; 
-    [SerializeField] private float duracionLaser = 5f;
+    [SerializeField] private float duracionLaser = 6f;
     [SerializeField] private float cadenciaDisparo = 0.4f;
     [SerializeField] private float margenBordeLaser = 0.15f;
     [SerializeField] private float alturaDisparoLaser = 0.4f;
@@ -31,6 +34,7 @@ public class Player : MonoBehaviour
     {
         escalaOriginal = transform.localScale;
         boxCollider = GetComponent<BoxCollider2D>();
+        ultimaPosicionMouse = Input.mousePosition;
     }
 
     public void ConfigurarLimites(Collider2D izq, Collider2D der, float centroJuegoX)
@@ -46,44 +50,71 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        float entradaX = Input.GetAxis("Horizontal");
-        Vector3 nuevaPosicion = transform.position + Vector3.right * (entradaX * velocidadMovimiento * Time.deltaTime);
-        
-        float mitadAnchoReal = 1f;
-        if (boxCollider != null)
+        if (Time.timeScale <= 0f) return;
+
+        float entradaX = Input.GetAxisRaw("Horizontal");
+
+        if (Mathf.Abs(entradaX) > 0.01f)
         {
-            mitadAnchoReal = boxCollider.bounds.extents.x;
+            usandoMouse = false;
+        }
+        else if (permitirControlMouse && (Input.mousePosition - ultimaPosicionMouse).sqrMagnitude > 1f)
+        {
+            usandoMouse = true;
+        }
+        ultimaPosicionMouse = Input.mousePosition;
+
+        Vector3 nuevaPosicion = transform.position;
+
+        if (usandoMouse && Camera.main != null)
+        {
+            Vector3 mundoMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            nuevaPosicion.x = mundoMouse.x;
+        }
+        else
+        {
+            nuevaPosicion.x += entradaX * velocidadMovimiento * Time.deltaTime;
         }
 
+        float mitadAnchoReal = boxCollider != null ? boxCollider.bounds.extents.x : 1f;
         float bordeIzq = paredIzquierda != null ? paredIzquierda.bounds.max.x : limiteIzquierdoX;
         float bordeDer = paredDerecha != null ? paredDerecha.bounds.min.x : limiteDerechoX;
 
-        float limiteActualIzq = bordeIzq + mitadAnchoReal;
-        float limiteActualDer = bordeDer - mitadAnchoReal;
-        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, limiteActualIzq, limiteActualDer);
-        
+        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, bordeIzq + mitadAnchoReal, bordeDer - mitadAnchoReal);
         transform.position = nuevaPosicion;
     }
 
     public bool AgrandarPaleta()
     {
-        if (corrutinaEfecto != null) return false;
+        bool esModoCaos = (SceneManager.GetActiveScene().name == "NivelCaos");
 
-        corrutinaEfecto = StartCoroutine(EfectoAgrandar());
-        return true;
-    }
+        // Si NO estamos en modo caos, reemplazamos el láser por el agrandado (comportamiento normal)
+        if (!esModoCaos)
+        {
+            DetenerLaser();
+        }
 
-    private IEnumerator EfectoAgrandar()
-    {
+        if (estaAgrandada) return false;
+
+        estaAgrandada = true;
         transform.localScale = new Vector3(escalaOriginal.x * escalaAmpliada, escalaOriginal.y, escalaOriginal.z);
-        yield return new WaitForSeconds(duracionPowerUp);
-        transform.localScale = escalaOriginal;
-        corrutinaEfecto = null;
+        return true;
     }
 
     public bool ActivarLaser()
     {
-        if (corrutinaLaser != null) return false;
+        bool esModoCaos = (SceneManager.GetActiveScene().name == "NivelCaos");
+
+        // Si NO estamos en modo caos, el láser quita el agrandado (comportamiento normal)
+        if (!esModoCaos)
+        {
+            QuitarAgrandar();
+        }
+
+        if (corrutinaLaser != null)
+        {
+            StopCoroutine(corrutinaLaser);
+        }
 
         corrutinaLaser = StartCoroutine(EfectoLaser());
         return true;
@@ -122,19 +153,24 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void ReiniciarEstadoPlayer()
+    public void QuitarAgrandar()
     {
-        if (corrutinaEfecto != null)
-        {
-            StopCoroutine(corrutinaEfecto);
-            corrutinaEfecto = null;
-        }
+        estaAgrandada = false;
         transform.localScale = escalaOriginal;
+    }
 
+    public void DetenerLaser()
+    {
         if (corrutinaLaser != null)
         {
             StopCoroutine(corrutinaLaser);
             corrutinaLaser = null;
         }
+    }
+
+    public void ReiniciarEstadoPlayer()
+    {
+        QuitarAgrandar();
+        DetenerLaser();
     }
 }

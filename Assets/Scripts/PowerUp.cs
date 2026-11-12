@@ -7,7 +7,7 @@ public class PowerUp : MonoBehaviour
     [SerializeField] private TipoPowerUp tipo;
     [SerializeField] private int puntosBonus = 500;
 
-    public enum TipoPowerUp { AgrandarPaleta, Multibola, Laser, BolaFuego }
+    public enum TipoPowerUp { AgrandarPaleta, Multibola, Laser, BolaFuego, VidaExtra }
 
     void Update()
     {
@@ -32,10 +32,12 @@ public class PowerUp : MonoBehaviour
                 switch (tipo)
                 {
                     case TipoPowerUp.AgrandarPaleta:
+                        // Agranda de forma permanente. NO apaga la bola de fuego para permitir la combinación.
                         powerUpActivado = controladorPlayer.AgrandarPaleta();
                         break;
                     
                     case TipoPowerUp.Multibola:
+                        // Se duplica y hereda el estado de fuego si la pelota principal lo tenía activo
                         if (pelotasActuales.Length > 0 && pelotasActuales.Length < 3)
                         {
                             ControladorDePelota pelotaBase = pelotasActuales[0];
@@ -65,10 +67,7 @@ public class PowerUp : MonoBehaviour
                                 ControladorDePelota[] todasLasPelotas = FindObjectsOfType<ControladorDePelota>();
                                 foreach (var pelota in todasLasPelotas)
                                 {
-                                    if (pelota != null && !pelota.esBolaFuego)
-                                    {
-                                        pelota.ActivarBolaFuego(3f);
-                                    }
+                                    if (pelota != null) pelota.ActivarBolaFuego();
                                 }
                             }
 
@@ -77,16 +76,27 @@ public class PowerUp : MonoBehaviour
                         break;
 
                     case TipoPowerUp.Laser:
+                        // Láser temporal: reemplaza únicamente al Agrandar (respetando el fuego si lo hubiera)
                         powerUpActivado = controladorPlayer.ActivarLaser();
                         break;
 
                     case TipoPowerUp.BolaFuego:
+                        // Fuego permanente en las pelotas, compatible con Agrandar y Multibola
                         foreach (var pelota in pelotasActuales)
                         {
-                            if (pelota != null && pelota.ActivarBolaFuego(3f))
+                            if (pelota != null && pelota.ActivarBolaFuego())
                             {
                                 powerUpActivado = true;
                             }
+                        }
+                        break;
+
+                    case TipoPowerUp.VidaExtra:
+                        // Suma 1 vida sin afectar ningún poder activo
+                        if (ControladorUI.Instance != null)
+                        {
+                            ControladorUI.Instance.SumarVida(1);
+                            powerUpActivado = true;
                         }
                         break;
                 }

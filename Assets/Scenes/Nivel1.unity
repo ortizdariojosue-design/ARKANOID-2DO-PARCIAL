@@ -1547,7 +1547,8 @@ MonoBehaviour:
   cajaDisparo: {fileID: 1205912043}
   textoDisparo: {fileID: 344399886}
   numeroNivel: 1
-  vidasIniciales: 3
+  nombreStagePersonalizado: 
+  vidasBaseNivel: 3
 --- !u!4 &2011100563
 Transform:
   m_ObjectHideFlags: 0
@@ -1847,7 +1848,7 @@ MonoBehaviour:
   musicaAudioSource: {fileID: 2038749613}
   sonidoLaser: {fileID: 8300000, guid: 1a1326ac5e6daba4bab4dae2cbbcfda0, type: 3}
   sonidoExplosionBloque: {fileID: 8300000, guid: b6063774ce790c84fb4f2bde059eb1f0, type: 3}
-  sonidoRebotePelota: {fileID: 8300000, guid: 020a8663ae0bc204dbc979c5b523522a, type: 3}
+  sonidoRebotePelota: {fileID: 8300000, guid: ecb97ca61d1cdfe4abcebbd83a7d693a, type: 3}
   sonidoPowerUp: {fileID: 8300000, guid: e019415ae6fef6649b19540dedb89258, type: 3}
   sonidoPerderVida: {fileID: 8300000, guid: a3b9668bfc8a0df48a67eed418e791ea, type: 3}
   musicaFondo: {fileID: 0}
@@ -2033,6 +2034,10 @@ PrefabInstance:
     - target: {fileID: 8208551670916784440, guid: 3f7c0cc5782b7d24d93399296aafcb89, type: 3}
       propertyPath: columnas
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8208551670916784440, guid: 3f7c0cc5782b7d24d93399296aafcb89, type: 3}
+      propertyPath: disenoNivel
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8208551670916784440, guid: 3f7c0cc5782b7d24d93399296aafcb89, type: 3}
       propertyPath: separacionX
@@ -2279,7 +2284,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1791237628510340753, guid: 4cf837ff4da0154409c8c27d0822629e, type: 3}
       propertyPath: velocidadInicial
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3986673667538291112, guid: 4cf837ff4da0154409c8c27d0822629e, type: 3}
       propertyPath: m_Name
@@ -2548,6 +2553,10 @@ PrefabInstance:
     - target: {fileID: 6271537912827430754, guid: 18f47c620e422d1428e72938ca261c1e, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911162818414400164, guid: 18f47c620e422d1428e72938ca261c1e, type: 3}
+      propertyPath: velocidadMovimiento
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 8442685338482530308, guid: 18f47c620e422d1428e72938ca261c1e, type: 3}
       propertyPath: m_LocalPosition.x

@@ -17,9 +17,9 @@ public class ControladorUI : MonoBehaviour
 
     [Header("Configuración del Nivel Actual")]
     [SerializeField] private int numeroNivel = 1;
-    [SerializeField] private int vidasIniciales = 3;
+    [SerializeField] private string nombreStagePersonalizado = ""; 
+    [SerializeField] private int vidasBaseNivel = 3;
 
-    // Estado persistente entre escenas
     public static int puntajeGlobal = 0;
     public static int puntajeAlIniciarNivel = 0;
     public static int vidasGlobales = 3;
@@ -39,16 +39,19 @@ public class ControladorUI : MonoBehaviour
 
         ultimaEscenaJugada = SceneManager.GetActiveScene().name;
 
-        if (numeroNivel == 1)
+        if (numeroNivel == 1 && string.IsNullOrEmpty(nombreStagePersonalizado))
         {
             puntajeGlobal = 0;
             puntajeAlIniciarNivel = 0;
-            vidasGlobales = vidasIniciales;
+            vidasGlobales = vidasBaseNivel;
         }
         else
         {
             puntajeAlIniciarNivel = puntajeGlobal;
-            if (vidasGlobales <= 0) vidasGlobales = vidasIniciales;
+            if (vidasGlobales < vidasBaseNivel)
+            {
+                vidasGlobales = vidasBaseNivel;
+            }
         }
     }
 
@@ -115,7 +118,16 @@ public class ControladorUI : MonoBehaviour
     private void ActualizarStage()
     {
         if (textoStage != null)
-            textoStage.text = $"STAGE\n<color=#38BDF8>{numeroNivel:D2}</color>";
+        {
+            if (!string.IsNullOrEmpty(nombreStagePersonalizado))
+            {
+                textoStage.text = $"STAGE\n<color=#38BDF8>{nombreStagePersonalizado}</color>";
+            }
+            else
+            {
+                textoStage.text = $"STAGE\n<color=#38BDF8>{numeroNivel:D2}</color>";
+            }
+        }
     }
 
     private void ActualizarTextoVidas()

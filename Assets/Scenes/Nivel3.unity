@@ -1547,7 +1547,8 @@ MonoBehaviour:
   cajaDisparo: {fileID: 1205912043}
   textoDisparo: {fileID: 344399886}
   numeroNivel: 3
-  vidasIniciales: 3
+  nombreStagePersonalizado: 
+  vidasBaseNivel: 3
 --- !u!4 &2011100563
 Transform:
   m_ObjectHideFlags: 0
@@ -1847,7 +1848,7 @@ MonoBehaviour:
   musicaAudioSource: {fileID: 2038749613}
   sonidoLaser: {fileID: 8300000, guid: 1a1326ac5e6daba4bab4dae2cbbcfda0, type: 3}
   sonidoExplosionBloque: {fileID: 8300000, guid: b6063774ce790c84fb4f2bde059eb1f0, type: 3}
-  sonidoRebotePelota: {fileID: 8300000, guid: 020a8663ae0bc204dbc979c5b523522a, type: 3}
+  sonidoRebotePelota: {fileID: 8300000, guid: ecb97ca61d1cdfe4abcebbd83a7d693a, type: 3}
   sonidoPowerUp: {fileID: 8300000, guid: e019415ae6fef6649b19540dedb89258, type: 3}
   sonidoPerderVida: {fileID: 8300000, guid: a3b9668bfc8a0df48a67eed418e791ea, type: 3}
   musicaFondo: {fileID: 0}

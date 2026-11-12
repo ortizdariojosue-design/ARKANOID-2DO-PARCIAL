@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public class MenuPrincipal : MonoBehaviour
 {
     [Header("Nombre de la escena de juego")]
-    [SerializeField] private string nombreEscenaJuego = "Nivel1";
+    [SerializeField] private string nombreEscenaJuego = "Tutorial";
 
     void Update()
     {
@@ -15,7 +15,7 @@ public class MenuPrincipal : MonoBehaviour
         }
         else if (Input.anyKeyDown)
         {
-            SceneManager.LoadScene(nombreEscenaJuego);
+            SceneManager.LoadScene("Tutorial");
         }
     }
 }
