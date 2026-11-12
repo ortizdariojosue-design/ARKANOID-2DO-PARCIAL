@@ -5,6 +5,18 @@ public class CamaraShake : MonoBehaviour
 {
     public static CamaraShake Instance;
 
+    [Header("Ajustes de Shake Leve")]
+    [Tooltip("Multiplica la fuerza que piden los scripts (0.6 = 60% de fuerza)")]
+    [Range(0.1f, 1.5f)]
+    [SerializeField] private float multiplicadorIntensidad = 0.6f;
+
+    [Tooltip("Fuerza mínima garantizada para que el movimiento se note bien")]
+    [SerializeField] private float magnitudMinimaVisible = 0.055f;
+
+    [Tooltip("Multiplica la duración original")]
+    [Range(0.5f, 1.5f)]
+    [SerializeField] private float multiplicadorDuracion = 0.95f;
+
     private Vector3 posicionOriginal;
     private Coroutine shakeCoroutine;
 
@@ -29,7 +41,11 @@ public class CamaraShake : MonoBehaviour
             StopCoroutine(shakeCoroutine);
             transform.localPosition = posicionOriginal;
         }
-        shakeCoroutine = StartCoroutine(ShakeRoutine(duracion, magnitud));
+
+        float duracionFinal = Mathf.Max(0.1f, duracion * multiplicadorDuracion);
+        float magnitudFinal = Mathf.Max(magnitudMinimaVisible, magnitud * multiplicadorIntensidad);
+
+        shakeCoroutine = StartCoroutine(ShakeRoutine(duracionFinal, magnitudFinal));
     }
 
     private IEnumerator ShakeRoutine(float duracion, float magnitud)
@@ -38,8 +54,11 @@ public class CamaraShake : MonoBehaviour
 
         while (tiempoTranscurrido < duracion)
         {
-            float x = Random.Range(-1f, 1f) * magnitud;
-            float y = Random.Range(-1f, 1f) * magnitud;
+            float progreso = tiempoTranscurrido / duracion;
+            float amortiguacion = Mathf.Lerp(1f, 0.35f, progreso);
+
+            float x = Random.Range(-1f, 1f) * magnitud * amortiguacion;
+            float y = Random.Range(-1f, 1f) * magnitud * amortiguacion;
 
             transform.localPosition = new Vector3(posicionOriginal.x + x, posicionOriginal.y + y, posicionOriginal.z);
 

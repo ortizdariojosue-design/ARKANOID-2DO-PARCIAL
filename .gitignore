@@ -1,21 +1,43 @@
-# Unity generated
-Library/
-Temp/
-Obj/
-Build/
-Builds/
-UserSettings/
-Logs/
-MemoryCaptures/
+cat << 'EOF' > .gitignore
+# Carpetas generadas por Unity (no se suben)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
 
-# Visual Studio / IDE
+# Cachés y archivos temporales
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Archivos de Visual Studio / VS Code
 .vs/
+.vscode/
 *.csproj
+*.unityproj
 *.sln
+*.suo
+*.tmp
 *.user
 *.userprefs
 *.pidb
-*.suo
 *.booproj
-*.unityproj
-*.DS_Store
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+EOF

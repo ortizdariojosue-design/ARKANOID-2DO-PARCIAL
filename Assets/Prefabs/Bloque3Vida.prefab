@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8210726724267415206}
   - component: {fileID: 6271307443632086975}
-  - component: {fileID: 5009945528038107609}
+  - component: {fileID: 1725646003896532617}
   - component: {fileID: 6961985503550898854}
   m_Layer: 0
   m_Name: Bloque3Vida
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.05, y: 0.84, z: 0.031245586}
-  m_LocalScale: {x: 1, y: 0.4615, z: 1}
+  m_LocalScale: {x: 1.551782, y: 1.611986, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -74,9 +74,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0.9638133, a: 1}
+  m_SortingOrder: 9
+  m_Sprite: {fileID: 21300000, guid: a980ff16d90259542a813b36aa5f1c3a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -86,7 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &5009945528038107609
+--- !u!61 &1725646003896532617
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,14 +122,14 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.64, y: 0.32}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.64, y: 0.32}
   m_EdgeRadius: 0
 --- !u!114 &6961985503550898854
 MonoBehaviour:
@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vida: 3
+  puntosAlRomper: 100
   "colorDa\xF1ado": {r: 1, g: 0.6179246, b: 0.9370873, a: 1}
   prefabParticulas: {fileID: 4826571154123277815, guid: 182bb0001523b484583789ccc56cebc1, type: 3}
   prefabsPowerUps:
@@ -151,4 +152,3 @@ MonoBehaviour:
   - {fileID: 6351041399501296497, guid: c962a8ae35faa4846b209ec33da5e604, type: 3}
   - {fileID: 2613705956770851223, guid: 0f36f1d9af8882643b6c5440d7aff4b9, type: 3}
   - {fileID: 8454435404405192805, guid: c1f8f9461d1a0ea4884d460084977c0d, type: 3}
-  probabilidadPowerUp: 100

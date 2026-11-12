@@ -7,22 +7,57 @@ public class ControladorDePelota : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private bool estaIniciado = false;
+    private Vector3 posicionLocalInicial;
     
     public bool esBolaFuego = false;
     private Vector2 velocidadGuardada; 
     private Coroutine corrutinaFuego;
+    private float tiempoAtrapada = 0f; 
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        posicionLocalInicial = transform.localPosition;
+    }
+
+    void Start()
+    {
+        IgnorarColisionesEntrePelotas();
+        if (!estaIniciado && ControladorUI.Instance != null)
+        {
+            ControladorUI.Instance.MostrarCartelDisparo(true);
+        }
     }
 
     void Update()
     {
-        if (!estaIniciado && Input.GetKeyDown(KeyCode.Space))
+        if (!estaIniciado && Time.timeScale > 0f && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             LanzarPelota();
+        }
+
+        if (estaIniciado && rb != null)
+        {
+            if (Mathf.Abs(rb.velocity.y) < 0.2f)
+            {
+                tiempoAtrapada += Time.deltaTime;
+                if (tiempoAtrapada > 2f) 
+                {
+                    float direccionY = Random.value > 0.5f ? 3f : -3f;
+                    rb.velocity = new Vector2(rb.velocity.x, direccionY);
+                    tiempoAtrapada = 0f;
+                }
+            }
+            else
+            {
+                tiempoAtrapada = 0f;
+            }
+
+            if (rb.velocity.magnitude < velocidadInicial * 0.9f && rb.velocity.magnitude > 0.1f)
+            {
+                rb.velocity = rb.velocity.normalized * velocidadInicial;
+            }
         }
     }
 
@@ -39,6 +74,12 @@ public class ControladorDePelota : MonoBehaviour
         estaIniciado = true;
         transform.parent = null; 
         rb.simulated = true; 
+
+        if (ControladorUI.Instance != null)
+        {
+            ControladorUI.Instance.MostrarCartelDisparo(false);
+        }
+
         float randomX = Random.Range(-0.5f, 0.5f);
         Vector2 direccion = new Vector2(randomX, 1f).normalized;
         rb.velocity = direccion * velocidadInicial; 
@@ -48,6 +89,11 @@ public class ControladorDePelota : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            if (ControladorAudio.Instance != null && ControladorAudio.Instance.sonidoRebotePelota != null)
+            {
+                ControladorAudio.Instance.ReproducirSonido(ControladorAudio.Instance.sonidoRebotePelota);
+            }
+
             Collider2D colliderPaleta = collision.collider;
             float anchoPaleta = colliderPaleta.bounds.size.x;
             float puntoImpactoX = transform.position.x - collision.transform.position.x;
@@ -80,6 +126,25 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    public void IgnorarColisionesEntrePelotas()
+    {
+        Collider2D miCollider = GetComponent<Collider2D>();
+        if (miCollider == null) return;
+
+        ControladorDePelota[] otrasPelotas = FindObjectsOfType<ControladorDePelota>();
+        foreach (ControladorDePelota otra in otrasPelotas)
+        {
+            if (otra != null && otra != this)
+            {
+                Collider2D otroCollider = otra.GetComponent<Collider2D>();
+                if (otroCollider != null)
+                {
+                    Physics2D.IgnoreCollision(miCollider, otroCollider, true);
+                }
+            }
+        }
+    }
+
     public void ReiniciarEnPaleta(Transform playerTransform)
     {
         estaIniciado = false;
@@ -91,14 +156,20 @@ public class ControladorDePelota : MonoBehaviour
             corrutinaFuego = null;
         }
 
+        Player scriptPlayer = playerTransform.GetComponent<Player>();
         Vector3 posicionPlayer = playerTransform.position;
-        posicionPlayer.x = 0f;
+        posicionPlayer.x = scriptPlayer != null ? scriptPlayer.CentroX : 0f;
         playerTransform.position = posicionPlayer;
         
         transform.SetParent(playerTransform);
-        transform.localPosition = new Vector3(0f, 0.6f, 0f); 
+        transform.localPosition = posicionLocalInicial; 
         rb.velocity = Vector2.zero;
         rb.simulated = false; 
+
+        if (ControladorUI.Instance != null)
+        {
+            ControladorUI.Instance.MostrarCartelDisparo(true);
+        }
     }      
 
     public void DuplicarPelota()
@@ -118,12 +189,16 @@ public class ControladorDePelota : MonoBehaviour
 
         if (scriptNuevaPelota != null)
         {
-            scriptNuevaPelota.esBolaFuego = this.esBolaFuego;
-            
+            scriptNuevaPelota.IgnorarColisionesEntrePelotas();
+            scriptNuevaPelota.estaIniciado = true;
+            scriptNuevaPelota.corrutinaFuego = null;
+            scriptNuevaPelota.esBolaFuego = false;
+            scriptNuevaPelota.posicionLocalInicial = this.posicionLocalInicial;
+
             SpriteRenderer srNueva = nuevaPelota.GetComponent<SpriteRenderer>();
             if (srNueva != null)
             {
-                srNueva.color = this.esBolaFuego ? Color.red : Color.white;
+                srNueva.color = Color.white;
             }
 
             if (this.esBolaFuego)
@@ -133,10 +208,12 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
-    public void ActivarBolaFuego(float duracion)
+    public bool ActivarBolaFuego(float duracion)
     {
-        if (corrutinaFuego != null) StopCoroutine(corrutinaFuego);
+        if (esBolaFuego) return false;
+
         corrutinaFuego = StartCoroutine(RutinaFuego(duracion));
+        return true;
     }
 
     private IEnumerator RutinaFuego(float duracion)

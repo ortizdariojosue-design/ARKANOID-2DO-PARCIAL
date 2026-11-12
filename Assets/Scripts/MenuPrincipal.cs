@@ -13,8 +13,7 @@ public class MenuPrincipal : MonoBehaviour
             Debug.Log("Saliendo del juego...");
             Application.Quit();
         }
-
-        if (Input.anyKeyDown)
+        else if (Input.anyKeyDown)
         {
             SceneManager.LoadScene(nombreEscenaJuego);
         }

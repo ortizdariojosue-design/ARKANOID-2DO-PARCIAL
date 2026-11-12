@@ -5,6 +5,7 @@ public class PowerUp : MonoBehaviour
     [Header("Configuración")]
     [SerializeField] private float velocidadCaida = 3f;
     [SerializeField] private TipoPowerUp tipo;
+    [SerializeField] private int puntosBonus = 500;
 
     public enum TipoPowerUp { AgrandarPaleta, Multibola, Laser, BolaFuego }
 
@@ -26,15 +27,16 @@ public class PowerUp : MonoBehaviour
             if (controladorPlayer != null)
             {
                 ControladorDePelota[] pelotasActuales = FindObjectsOfType<ControladorDePelota>();
+                bool powerUpActivado = false;
 
                 switch (tipo)
                 {
                     case TipoPowerUp.AgrandarPaleta:
-                        controladorPlayer.AgrandarPaleta();
+                        powerUpActivado = controladorPlayer.AgrandarPaleta();
                         break;
                     
                     case TipoPowerUp.Multibola:
-                        if (pelotasActuales.Length > 0)
+                        if (pelotasActuales.Length > 0 && pelotasActuales.Length < 3)
                         {
                             ControladorDePelota pelotaBase = pelotasActuales[0];
                             bool habiaFuegoActivo = false;
@@ -69,22 +71,37 @@ public class PowerUp : MonoBehaviour
                                     }
                                 }
                             }
+
+                            powerUpActivado = true;
                         }
                         break;
 
                     case TipoPowerUp.Laser:
-                        controladorPlayer.ActivarLaser();
+                        powerUpActivado = controladorPlayer.ActivarLaser();
                         break;
 
                     case TipoPowerUp.BolaFuego:
                         foreach (var pelota in pelotasActuales)
                         {
-                            if (pelota != null)
+                            if (pelota != null && pelota.ActivarBolaFuego(3f))
                             {
-                                pelota.ActivarBolaFuego(3f);
+                                powerUpActivado = true;
                             }
                         }
                         break;
+                }
+
+                if (powerUpActivado)
+                {
+                    if (ControladorUI.Instance != null)
+                    {
+                        ControladorUI.Instance.SumarPuntos(puntosBonus);
+                    }
+
+                    if (ControladorAudio.Instance != null && ControladorAudio.Instance.sonidoPowerUp != null)
+                    {
+                        ControladorAudio.Instance.ReproducirSonido(ControladorAudio.Instance.sonidoPowerUp);
+                    }
                 }
             }
             Destroy(gameObject);

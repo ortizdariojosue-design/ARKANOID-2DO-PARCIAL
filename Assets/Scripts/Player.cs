@@ -5,7 +5,12 @@ public class Player : MonoBehaviour
 {
     [Header("Configuración de Movimiento")]
     [SerializeField] private float velocidadMovimiento = 10f;
-    [SerializeField] private float bordeParedX = 7.5f; 
+    [SerializeField] private Collider2D paredIzquierda;
+    [SerializeField] private Collider2D paredDerecha;
+    [SerializeField] private float limiteIzquierdoX = -8.2f;
+    [SerializeField] private float limiteDerechoX = 3.2f;
+
+    public float CentroX { get; private set; } = 0f;
 
     [Header("Power-up Agrandar")]
     [SerializeField] private float escalaAmpliada = 1.5f;
@@ -17,14 +22,26 @@ public class Player : MonoBehaviour
     [Header("Power-up Láser")]
     [SerializeField] private GameObject prefabLaser; 
     [SerializeField] private float duracionLaser = 5f;
-    [SerializeField] private float cadenciaDisparo = 0.4f; 
-    private bool tieneLaser = false;
+    [SerializeField] private float cadenciaDisparo = 0.4f;
+    [SerializeField] private float margenBordeLaser = 0.15f;
+    [SerializeField] private float alturaDisparoLaser = 0.4f;
     private Coroutine corrutinaLaser;
 
     void Start()
     {
         escalaOriginal = transform.localScale;
         boxCollider = GetComponent<BoxCollider2D>();
+    }
+
+    public void ConfigurarLimites(Collider2D izq, Collider2D der, float centroJuegoX)
+    {
+        paredIzquierda = izq;
+        paredDerecha = der;
+        CentroX = centroJuegoX;
+
+        Vector3 pos = transform.position;
+        pos.x = CentroX;
+        transform.position = pos;
     }
 
     void Update()
@@ -38,16 +55,22 @@ public class Player : MonoBehaviour
             mitadAnchoReal = boxCollider.bounds.extents.x;
         }
 
-        float limiteActualX = bordeParedX - mitadAnchoReal;
-        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, -limiteActualX, limiteActualX);
+        float bordeIzq = paredIzquierda != null ? paredIzquierda.bounds.max.x : limiteIzquierdoX;
+        float bordeDer = paredDerecha != null ? paredDerecha.bounds.min.x : limiteDerechoX;
+
+        float limiteActualIzq = bordeIzq + mitadAnchoReal;
+        float limiteActualDer = bordeDer - mitadAnchoReal;
+        nuevaPosicion.x = Mathf.Clamp(nuevaPosicion.x, limiteActualIzq, limiteActualDer);
         
         transform.position = nuevaPosicion;
     }
 
-    public void AgrandarPaleta()
+    public bool AgrandarPaleta()
     {
-        if (corrutinaEfecto != null) StopCoroutine(corrutinaEfecto);
+        if (corrutinaEfecto != null) return false;
+
         corrutinaEfecto = StartCoroutine(EfectoAgrandar());
+        return true;
     }
 
     private IEnumerator EfectoAgrandar()
@@ -58,15 +81,16 @@ public class Player : MonoBehaviour
         corrutinaEfecto = null;
     }
 
-    public void ActivarLaser()
+    public bool ActivarLaser()
     {
-        if (corrutinaLaser != null) StopCoroutine(corrutinaLaser);
+        if (corrutinaLaser != null) return false;
+
         corrutinaLaser = StartCoroutine(EfectoLaser());
+        return true;
     }
 
     private IEnumerator EfectoLaser()
     {
-        tieneLaser = true;
         float tiempoTranscurrido = 0f;
         while (tiempoTranscurrido < duracionLaser)
         {
@@ -75,7 +99,6 @@ public class Player : MonoBehaviour
             tiempoTranscurrido += cadenciaDisparo;
         }
 
-        tieneLaser = false;
         corrutinaLaser = null;
     }
 
@@ -83,8 +106,19 @@ public class Player : MonoBehaviour
     {
         if (prefabLaser != null)
         {
-            Vector3 posicionDisparo = transform.position + new Vector3(0f, 0.5f, 0f);
-            Instantiate(prefabLaser, posicionDisparo, Quaternion.identity);
+            float mitadAncho = boxCollider != null ? boxCollider.bounds.extents.x : 1f;
+            float offsetX = Mathf.Max(0.1f, mitadAncho - margenBordeLaser);
+
+            Vector3 posicionIzquierda = transform.position + new Vector3(-offsetX, alturaDisparoLaser, 0f);
+            Vector3 posicionDerecha = transform.position + new Vector3(offsetX, alturaDisparoLaser, 0f);
+
+            Instantiate(prefabLaser, posicionIzquierda, Quaternion.identity);
+            Instantiate(prefabLaser, posicionDerecha, Quaternion.identity);
+
+            if (ControladorAudio.Instance != null && ControladorAudio.Instance.sonidoLaser != null)
+            {
+                ControladorAudio.Instance.ReproducirSonido(ControladorAudio.Instance.sonidoLaser);
+            }
         }
     }
 
@@ -102,6 +136,5 @@ public class Player : MonoBehaviour
             StopCoroutine(corrutinaLaser);
             corrutinaLaser = null;
         }
-        tieneLaser = false;
     }
 }
