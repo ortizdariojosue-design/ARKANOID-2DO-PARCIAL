@@ -37,22 +37,9 @@ public class ControladorUI : MonoBehaviour
             return;
         }
 
-        ultimaEscenaJugada = SceneManager.GetActiveScene().name;
-
-        if (numeroNivel == 1 && string.IsNullOrEmpty(nombreStagePersonalizado))
-        {
-            puntajeGlobal = 0;
-            puntajeAlIniciarNivel = 0;
-            vidasGlobales = vidasBaseNivel;
-        }
-        else
-        {
-            puntajeAlIniciarNivel = puntajeGlobal;
-            if (vidasGlobales < vidasBaseNivel)
-            {
-                vidasGlobales = vidasBaseNivel;
-            }
-        }
+        string escenaActual = SceneManager.GetActiveScene().name;
+        ultimaEscenaJugada = escenaActual;
+        puntajeAlIniciarNivel = puntajeGlobal;
     }
 
     private void Start()
@@ -61,6 +48,14 @@ public class ControladorUI : MonoBehaviour
             textoDisparo.text = "PRESS SPACE OR CLICK TO FIRE";
 
         ActualizarTodaLaInterfaz();
+    }
+
+    // Reinicia todos los valores para una partida nueva desde cero
+    public static void ReiniciarPartida()
+    {
+        puntajeGlobal = 0;
+        puntajeAlIniciarNivel = 0;
+        vidasGlobales = 3;
     }
 
     public static void PrepararReintentoMismoNivel()
