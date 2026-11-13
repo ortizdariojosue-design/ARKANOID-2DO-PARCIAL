@@ -53,9 +53,11 @@ MonoBehaviour:
   sonidoRebotePelota: {fileID: 8300000, guid: ecb97ca61d1cdfe4abcebbd83a7d693a, type: 3}
   sonidoPowerUp: {fileID: 8300000, guid: e019415ae6fef6649b19540dedb89258, type: 3}
   sonidoPerderVida: {fileID: 8300000, guid: a3b9668bfc8a0df48a67eed418e791ea, type: 3}
+  sonidoHoverBoton: {fileID: 8300000, guid: c054cb6a3e8e35346891f9ceb0d0454a, type: 3}
+  sonidoClickBoton: {fileID: 8300000, guid: 5830b118206905841a85fe0c185d5695, type: 3}
   musicaMenu:
     clip: {fileID: 8300000, guid: d472dae532b4c714689337cd1434de25, type: 3}
-    volumenBase: 1
+    volumenBase: 0.5
     enLoop: 1
   musicaTutorial:
     clip: {fileID: 8300000, guid: 5d87df015a5495945adb069095b1413f, type: 3}

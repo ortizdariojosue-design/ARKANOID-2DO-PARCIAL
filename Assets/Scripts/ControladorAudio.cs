@@ -24,6 +24,8 @@ public class ControladorAudio : MonoBehaviour
     public AudioClip sonidoRebotePelota;
     public AudioClip sonidoPowerUp;
     public AudioClip sonidoPerderVida;
+    public AudioClip sonidoHoverBoton;
+    public AudioClip sonidoClickBoton;
 
     [Header("Músicas por Escena (Con Control Individual)")]
     [SerializeField] private ConfiguracionMusica musicaMenu = new ConfiguracionMusica { volumenBase = 1f, enLoop = true };
