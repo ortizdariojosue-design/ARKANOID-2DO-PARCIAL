@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+// Genera de forma procedural los límites físicos (colliders) y visuales (tiles y esquinas)
+// del área de juego, y vincula automáticamente los topes laterales con la paleta del jugador.
+
 public class GeneradorDeMuros : MonoBehaviour
 {
     [Header("Dimensiones del Área de Juego")]
@@ -23,11 +27,13 @@ public class GeneradorDeMuros : MonoBehaviour
     [SerializeField] private int orderInLayer = 5;
     [SerializeField] private string tagMuro = "Pared";
 
+    // Ejecuta la construcción inicial del marco del tablero al cargar la escena
     void Awake()
     {
         GenerarMuros();
     }
 
+    // Limpia muros previos, calcula dimensiones, crea los colliders perimetrales y distribuye los sprites visuales
     public void GenerarMuros()
     {
         for (int i = transform.childCount - 1; i >= 0; i--)
@@ -109,6 +115,7 @@ public class GeneradorDeMuros : MonoBehaviour
         }
     }
 
+    // Crea un objeto contenedor con BoxCollider2D, etiqueta y material físico de rebote para cada pared
     private BoxCollider2D CrearContenedorPared(string nombre, Vector3 posicion, Vector2 tamanoCollider)
     {
         GameObject obj = new GameObject(nombre);
@@ -124,6 +131,7 @@ public class GeneradorDeMuros : MonoBehaviour
         return col;
     }
 
+    // Instancia una pieza gráfica individual del muro asignando su sprite, escala y capa de renderizado
     private void CrearTileVisual(Sprite sprite, Vector3 posicion, Vector3 escala, Transform padre)
     {
         GameObject tile = new GameObject("TileMuro");
@@ -136,6 +144,7 @@ public class GeneradorDeMuros : MonoBehaviour
         sr.sortingOrder = orderInLayer;
     }
 
+    // Dibuja una guía visual en el editor de Unity para previsualizar el área interior jugable
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;

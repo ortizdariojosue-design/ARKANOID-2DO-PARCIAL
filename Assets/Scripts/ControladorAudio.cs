@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-
+// Define los parámetros individuales de cada pista musical (clip, volumen base y bucle).
 [System.Serializable]
 public class ConfiguracionMusica
 {
@@ -9,7 +9,8 @@ public class ConfiguracionMusica
     [Range(0f, 1f)] public float volumenBase = 1f;
     public bool enLoop = true;
 }
-
+// Gestor global y persistente Singleton que administra la música de fondo por escena
+// y los efectos de sonido (FX), sincronizando los niveles de volumen en todo el juego.
 public class ControladorAudio : MonoBehaviour
 {
     public static ControladorAudio Instance { get; private set; }
@@ -46,6 +47,7 @@ public class ControladorAudio : MonoBehaviour
     public float MultiplicadorVolumenGeneral { get; private set; } = 1f;
     private ConfiguracionMusica pistaActual;
 
+    // Inicializa la instancia única persistente entre escenas y suscribe el evento de cambio de escena
     void Awake()
     {
         if (Instance == null)
@@ -60,7 +62,7 @@ public class ControladorAudio : MonoBehaviour
             return;
         }
     }
-
+    // Cancela la suscripción al evento de cambio de escena al destruir la instancia principal
     private void OnDestroy()
     {
         if (Instance == this)
@@ -69,6 +71,7 @@ public class ControladorAudio : MonoBehaviour
         }
     }
 
+    // Selecciona y reproduce automáticamente la pista musical correspondiente a la escena cargada
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "PantallaPausa") return;
@@ -109,6 +112,7 @@ public class ControladorAudio : MonoBehaviour
         CambiarMusica(configElegida);
     }
 
+    // Reemplaza la pista en reproducción aplicando su configuración de volumen base y bucle
     public void CambiarMusica(ConfiguracionMusica nuevaConfig)
     {
         if (musicaAudioSource == null || nuevaConfig == null || nuevaConfig.clip == null) return;
@@ -127,12 +131,14 @@ public class ControladorAudio : MonoBehaviour
         musicaAudioSource.Play();
     }
 
+    // Actualiza el multiplicador global de volumen desde los controles de UI
     public void EstablecerVolumenGeneral(float nuevoMultiplicador)
     {
         MultiplicadorVolumenGeneral = Mathf.Clamp01(nuevoMultiplicador);
         ActualizarVolumenes();
     }
 
+    // Sincroniza el volumen final de música (respetando su volumen base) y de efectos FX
     private void ActualizarVolumenes()
     {
         if (musicaAudioSource != null)
@@ -147,6 +153,7 @@ public class ControladorAudio : MonoBehaviour
         }
     }
 
+    // Reproduce un efecto de sonido puntual evitando saturación por repeticiones simultáneas
     public void ReproducirSonido(AudioClip clip)
     {
         if (clip == null || efectosAudioSource == null) return;

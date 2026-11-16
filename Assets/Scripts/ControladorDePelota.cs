@@ -1,5 +1,8 @@
 using UnityEngine;
 
+// Controla el comportamiento físico de la pelota: lanzamiento inicial desde la paleta,
+// ángulos de rebote direccional, prevención de bucles horizontales y estados de power-up (Bola de Fuego y Multibola).
+
 public class ControladorDePelota : MonoBehaviour
 {
     [SerializeField] private float velocidadInicial = 10f;
@@ -12,6 +15,7 @@ public class ControladorDePelota : MonoBehaviour
     private Vector2 velocidadGuardada; 
     private float tiempoAtrapada = 0f; 
 
+    // Obtiene los componentes físicos/visuales y guarda el offset inicial respecto a la paleta
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -19,6 +23,7 @@ public class ControladorDePelota : MonoBehaviour
         posicionLocalInicial = transform.localPosition;
     }
 
+    // Configura la inmunidad de colisión entre pelotas y muestra el cartel de disparo si aún no se lanzó
     void Start()
     {
         IgnorarColisionesEntrePelotas();
@@ -28,8 +33,10 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Gestiona la entrada de lanzamiento, evita que la pelota quede rebotando horizontalmente y mantiene su velocidad constante
     void Update()
     {
+        // Detecta Espacio o Clic Izquierdo para despegar la pelota de la paleta
         if (!estaIniciado && Time.timeScale > 0f && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             LanzarPelota();
@@ -37,6 +44,7 @@ public class ControladorDePelota : MonoBehaviour
 
         if (estaIniciado && rb != null)
         {
+            // Corrige la trayectoria si la velocidad vertical es casi nula durante más de 2 segundos
             if (Mathf.Abs(rb.velocity.y) < 0.2f)
             {
                 tiempoAtrapada += Time.deltaTime;
@@ -52,6 +60,7 @@ public class ControladorDePelota : MonoBehaviour
                 tiempoAtrapada = 0f;
             }
 
+            // Normaliza la magnitud de la velocidad para evitar que la pelota se frene tras múltiples rebotes
             if (rb.velocity.magnitude < velocidadInicial * 0.9f && rb.velocity.magnitude > 0.1f)
             {
                 rb.velocity = rb.velocity.normalized * velocidadInicial;
@@ -59,6 +68,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Almacena la velocidad previa al impacto para conservarla si atraviesa bloques con Bola de Fuego
     void FixedUpdate()
     {
         if (rb != null)
@@ -67,6 +77,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Desacopla la pelota de la paleta, activa su simulación física y le aplica un impulso ascendente aleatorio
     void LanzarPelota()
     {
         estaIniciado = true;
@@ -83,6 +94,7 @@ public class ControladorDePelota : MonoBehaviour
         rb.velocity = direccion * velocidadInicial; 
     }
 
+    // Calcula el ángulo de rebote según la zona de impacto en la paleta o mantiene la trayectoria si es Bola de Fuego
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -92,6 +104,7 @@ public class ControladorDePelota : MonoBehaviour
                 ControladorAudio.Instance.ReproducirSonido(ControladorAudio.Instance.sonidoRebotePelota);
             }
 
+            // Calcula el desplazamiento relativo (-1 a 1) desde el centro de la paleta para dirigir el rebote
             Collider2D colliderPaleta = collision.collider;
             float anchoPaleta = colliderPaleta.bounds.size.x;
             float puntoImpactoX = transform.position.x - collision.transform.position.x;
@@ -103,6 +116,7 @@ public class ControladorDePelota : MonoBehaviour
         }
         else if (collision.gameObject.GetComponent<ControladorDeBloque>() != null)
         {
+            // Si la Bola de Fuego está activa, conserva la velocidad previa para atravesar el bloque sin rebotar
             if (esBolaFuego)
             {
                 rb.velocity = velocidadGuardada;
@@ -110,6 +124,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Asegura un componente vertical mínimo tras cualquier rebote para evitar ángulos demasiado planos
     void OnCollisionExit2D(Collision2D colision)
     {
         if (estaIniciado)
@@ -124,6 +139,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Desactiva las colisiones físicas entre todas las pelotas activas durante el modo Multibola
     public void IgnorarColisionesEntrePelotas()
     {
         Collider2D miCollider = GetComponent<Collider2D>();
@@ -143,6 +159,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Centra la paleta, vuelve a acoplar la pelota sobre ella y restablece su estado inicial tras perder una vida
     public void ReiniciarEnPaleta(Transform playerTransform)
     {
         estaIniciado = false;
@@ -164,6 +181,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }      
 
+    // Instancia una copia de la pelota en movimiento para el power-up Multibola, heredando el estado de fuego si estaba activo
     public void DuplicarPelota()
     {
         Vector3 posicionSpawn = transform.position + new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), 0f);
@@ -197,6 +215,7 @@ public class ControladorDePelota : MonoBehaviour
         }
     }
 
+    // Activa el estado de Bola de Fuego cambiando el tinte visual de la pelota a rojo
     public bool ActivarBolaFuego()
     {
         if (esBolaFuego) return false;
@@ -206,6 +225,7 @@ public class ControladorDePelota : MonoBehaviour
         return true;
     }
 
+    // Desactiva el estado de Bola de Fuego y restaura el color original de la pelota
     public void DesactivarBolaFuego()
     {
         esBolaFuego = false;

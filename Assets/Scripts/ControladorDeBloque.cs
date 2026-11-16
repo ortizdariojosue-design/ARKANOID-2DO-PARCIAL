@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+// Controla el comportamiento individual de cada ladrillo: resistencia (vida), cambio de color al recibir daño,
+// suma de puntaje, efectos visuales/sonoros y generación aleatoria de power-ups al destruirse.
+
 public class ControladorDeBloque : MonoBehaviour
 {
     [Header("Vida y Puntos del Bloque")]
@@ -19,16 +22,17 @@ public class ControladorDeBloque : MonoBehaviour
     [SerializeField] private GameObject[] prefabsPowerUps; 
     private float probabilidadPowerUp = 20f; 
 
+    // Permite que el generador de niveles ajuste el porcentaje de aparición de power-ups de este bloque
     public void ConfigurarProbabilidad(float nuevaProbabilidad)
     {
         probabilidadPowerUp = nuevaProbabilidad;
     }
 
+    // Obtiene el SpriteRenderer y filtra el power-up de vida extra si el nivel actual es NivelCaos
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Si estamos en el Nivel Caos, filtramos los power-ups para que nunca salga VidaExtra
         if (SceneManager.GetActiveScene().name == "NivelCaos")
         {
             if (prefabsPowerUps != null && prefabsPowerUps.Length > 0)
@@ -46,6 +50,7 @@ public class ControladorDeBloque : MonoBehaviour
         }
     }
 
+    // Detecta el choque contra la pelota y verifica si tiene activo el estado de Bola de Fuego
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Pelota"))
@@ -56,6 +61,7 @@ public class ControladorDeBloque : MonoBehaviour
         }
     }
 
+    // Descuenta vida al bloque; si llega a cero dispara puntaje, sonido, shake, partículas y posible power-up
     public void RecibirImpacto(bool destruirInstantaneo = false)
     {
         if (vida <= 0) return;
@@ -71,11 +77,13 @@ public class ControladorDeBloque : MonoBehaviour
 
         if (vida <= 0)
         {
+            // Actualiza el marcador global de puntaje
             if (ControladorUI.Instance != null)
             {
                 ControladorUI.Instance.SumarPuntos(puntosAlRomper);
             }
 
+            // Reproduce el efecto sonoro de destrucción y activa la sacudida de cámara
             if (ControladorAudio.Instance != null && ControladorAudio.Instance.sonidoExplosionBloque != null)
             {
                 ControladorAudio.Instance.ReproducirSonido(ControladorAudio.Instance.sonidoExplosionBloque);
@@ -86,6 +94,7 @@ public class ControladorDeBloque : MonoBehaviour
                 CamaraShake.Instance.LanzarShake(0.1f, 0.15f);
             }
 
+            // Instancia las partículas de explosión heredando el color actual del ladrillo
             if (prefabParticulas != null)
             {
                 GameObject particulas = Instantiate(prefabParticulas, transform.position, Quaternion.identity);
@@ -99,6 +108,7 @@ public class ControladorDeBloque : MonoBehaviour
                 Destroy(particulas, 1f);
             }
 
+            // Evalúa la probabilidad aleatoria para soltar un power-up
             if (prefabsPowerUps != null && prefabsPowerUps.Length > 0)
             {
                 float suerte = Random.Range(0f, 100f);
@@ -113,6 +123,7 @@ public class ControladorDeBloque : MonoBehaviour
         }
         else
         {
+            // Cambia el color del bloque para indicar visualmente que quedó con 1 punto de vida
             if (spriteRenderer != null && vida == 1)
             {
                 spriteRenderer.color = colorDañado;

@@ -2,6 +2,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+
+// Administra la escena del Menú Principal: reinicia las estadísticas globales de partida,
+// anima el título con un efecto de escala cíclico, gestiona el nivel de audio general
+// y permite iniciar el juego (mediante botón o tecla Enter) o cerrar la aplicación.
+
 public class MenuPrincipal : MonoBehaviour
 {
     [Header("Configuración de Escena")]
@@ -17,6 +22,7 @@ public class MenuPrincipal : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textoBotonAudio;
     private int nivelVolumen = 3;
 
+    // Restablece el estado inicial del menú, limpia puntaje/vidas previas y sincroniza el botón de audio
     void Start()
     {
         Time.timeScale = 1f;
@@ -31,6 +37,7 @@ public class MenuPrincipal : MonoBehaviour
             escalaBaseTitulo = tituloArkanoid.localScale;
         }
 
+        // Lee el multiplicador de volumen global para mostrar el estado actual en pantalla
         float volumenActual = (ControladorAudio.Instance != null)
             ? ControladorAudio.Instance.MultiplicadorVolumenGeneral
             : AudioListener.volume;
@@ -43,6 +50,7 @@ public class MenuPrincipal : MonoBehaviour
         ActualizarTextoAudio();
     }
 
+    // Ejecuta la animación de escala del título y detecta la tecla Enter para comenzar a jugar
     void Update()
     {
         if (tituloArkanoid != null)
@@ -50,14 +58,22 @@ public class MenuPrincipal : MonoBehaviour
             float factor = 1f + Mathf.Sin(Time.time * velocidadRespiracion) * intensidadRespiracion;
             tituloArkanoid.localScale = escalaBaseTitulo * factor;
         }
+
+        // Permite comenzar la partida presionando Enter (requisito de la consigna)
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            Jugar();
+        }
     }
 
+    // Reinicia las variables de partida y carga la escena de Tutorial
     public void Jugar()
     {
         ControladorUI.ReiniciarPartida();
         SceneManager.LoadScene(nombreEscenaJuego);
     }
 
+    // Alterna de forma cíclica el nivel de volumen global (HIGH, MID, LOW, OFF)
     public void CambiarAudioCiclico()
     {
         nivelVolumen = (nivelVolumen + 1) % 4;
@@ -83,6 +99,7 @@ public class MenuPrincipal : MonoBehaviour
         ActualizarTextoAudio();
     }
 
+    // Actualiza la etiqueta visual del botón de audio según el nivel seleccionado
     private void ActualizarTextoAudio()
     {
         if (textoBotonAudio == null) return;
@@ -96,6 +113,7 @@ public class MenuPrincipal : MonoBehaviour
         }
     }
     
+    // Cierra la aplicación compilada o detiene la ejecución si se prueba desde el editor de Unity
     public void Salir()
     {
         Debug.Log("Saliendo del juego...");

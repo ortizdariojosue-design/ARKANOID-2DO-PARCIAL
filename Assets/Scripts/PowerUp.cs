@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+// Controla el descenso vertical de las cápsulas de power-up y aplica su efecto correspondiente
+// (AgrandarPaleta, Multibola, Laser, BolaFuego o VidaExtra) al entrar en contacto con la paleta.
+
 public class PowerUp : MonoBehaviour
 {
     [Header("Configuración")]
@@ -9,6 +13,7 @@ public class PowerUp : MonoBehaviour
 
     public enum TipoPowerUp { AgrandarPaleta, Multibola, Laser, BolaFuego, VidaExtra }
 
+    // Desplaza el power-up hacia abajo de forma constante y lo destruye si sale de los límites inferiores
     void Update()
     {
         transform.Translate(Vector3.down * velocidadCaida * Time.deltaTime, Space.World);
@@ -19,6 +24,7 @@ public class PowerUp : MonoBehaviour
         }
     }
 
+    // Detecta si la cápsula es recogida por el jugador (activando el beneficio y puntaje) o si cae al sensor inferior
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -29,6 +35,7 @@ public class PowerUp : MonoBehaviour
                 ControladorDePelota[] pelotasActuales = FindObjectsOfType<ControladorDePelota>();
                 bool powerUpActivado = false;
 
+                // Evalúa el tipo de mejora recogida y ejecuta su lógica específica
                 switch (tipo)
                 {
                     case TipoPowerUp.AgrandarPaleta:
@@ -101,6 +108,7 @@ public class PowerUp : MonoBehaviour
                         break;
                 }
 
+                // Si el efecto se aplicó correctamente, suma los puntos de bonificación y reproduce el sonido
                 if (powerUpActivado)
                 {
                     if (ControladorUI.Instance != null)

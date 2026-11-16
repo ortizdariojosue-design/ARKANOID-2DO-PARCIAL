@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+// Controla el efecto de sacudida (camera shake) de la cámara al destruir bloques o recibir impactos.
 public class CamaraShake : MonoBehaviour
 {
     public static CamaraShake Instance;
@@ -20,6 +21,7 @@ public class CamaraShake : MonoBehaviour
     private Vector3 posicionOriginal;
     private Coroutine shakeCoroutine;
 
+    // Inicializa la instancia Singleton y guarda la posición inicial de la cámara
     private void Awake()
     {
         if (Instance == null)
@@ -29,11 +31,13 @@ public class CamaraShake : MonoBehaviour
         }
     }
 
+    // Actualiza la posición de referencia cada vez que se activa el objeto
     private void OnEnable()
     {
         posicionOriginal = transform.localPosition;
     }
 
+    // Inicia una nueva sacudida aplicando los multiplicadores de duración e intensidad configurados
     public void LanzarShake(float duracion, float magnitud)
     {
         if (shakeCoroutine != null)
@@ -48,6 +52,7 @@ public class CamaraShake : MonoBehaviour
         shakeCoroutine = StartCoroutine(ShakeRoutine(duracionFinal, magnitudFinal));
     }
 
+    // Ejecuta el desplazamiento aleatorio progresivo de la cámara y la devuelve a su posición original al terminar
     private IEnumerator ShakeRoutine(float duracion, float magnitud)
     {
         float tiempoTranscurrido = 0f;

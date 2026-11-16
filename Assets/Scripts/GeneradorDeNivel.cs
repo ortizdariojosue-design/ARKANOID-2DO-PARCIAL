@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+// Genera de forma procedural la formación de ladrillos de cada nivel según el patrón seleccionado
+// (rombo, simétrico aleatorio, fortaleza, pirámide invertida o grilla completa) y configura su probabilidad de power-ups.
+
 public class GeneradorDeNivel : MonoBehaviour
 {
     public enum TipoDiseno 
@@ -29,15 +33,18 @@ public class GeneradorDeNivel : MonoBehaviour
     [Header("Configuración de Power-ups por Nivel")]
     [Range(0f, 100f)][SerializeField] private float probabilidadPowerUpNivel = 20f;
 
+    // Inicia la construcción de la matriz de bloques al cargar la escena
     void Start()
     {
         GenerarGrilla();
     }
 
+    // Recorre filas y columnas para instanciar los ladrillos según el patrón elegido y asignarles su tasa de power-ups
     void GenerarGrilla()
     {
         if (prefabsBloques == null || prefabsBloques.Length == 0) return;
 
+        // Calcula el punto inicial izquierdo para centrar toda la grilla respecto a centro X
         float anchoTotal = (columnas - 1) * separacionX;
         float startX = centroX - (anchoTotal / 2f);
 
@@ -47,6 +54,7 @@ public class GeneradorDeNivel : MonoBehaviour
 
         for (int fila = 0; fila < filas; fila++)
         {
+            // Precalcula una fila espejada de izquierda a derecha cuando el diseño es AleatorioSimetrico
             int[] filaSimetrica = new int[columnas];
             for (int i = 0; i < columnas; i++) filaSimetrica[i] = -1;
 
@@ -67,6 +75,7 @@ public class GeneradorDeNivel : MonoBehaviour
             {
                 GameObject prefabAUsar = null;
 
+                // Selecciona el prefab de bloque según la geometría del patrón activo
                 if (disenoNivel == TipoDiseno.RomboClasico)
                 {
                     int distCentro = Mathf.Abs(fila - mitadFila) + Mathf.Abs(columna - mitadCol);
@@ -107,6 +116,7 @@ public class GeneradorDeNivel : MonoBehaviour
                     prefabAUsar = prefabsBloques[Random.Range(0, prefabsBloques.Length)];
                 }
 
+                // Instancia el bloque en su coordenada correspondiente y le transfiere la probabilidad de soltar power-ups
                 if (prefabAUsar != null)
                 {
                     float posX = startX + (columna * separacionX);

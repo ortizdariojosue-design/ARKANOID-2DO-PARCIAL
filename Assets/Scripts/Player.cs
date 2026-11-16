@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+
+// Controla la paleta del jugador: desplazamiento horizontal híbrido (teclado y mouse),
+// sujeción dentro de los muros laterales y gestión de los power-ups Agrandar y Láser.
+
 public class Player : MonoBehaviour
 {
     [Header("Configuración de Movimiento")]
@@ -30,6 +34,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float alturaDisparoLaser = 0.4f;
     private Coroutine corrutinaLaser;
 
+    // Guarda la escala base de la paleta y obtiene su BoxCollider2D para calcular los límites de movimiento
     void Start()
     {
         escalaOriginal = transform.localScale;
@@ -37,6 +42,7 @@ public class Player : MonoBehaviour
         ultimaPosicionMouse = Input.mousePosition;
     }
 
+    // Asigna los colliders de las paredes generadas proceduralmente y centra la paleta en el tablero
     public void ConfigurarLimites(Collider2D izq, Collider2D der, float centroJuegoX)
     {
         paredIzquierda = izq;
@@ -48,10 +54,12 @@ public class Player : MonoBehaviour
         transform.position = pos;
     }
 
+    // Gestiona el desplazamiento lateral por teclado o mouse y restringe la posición entre ambos muros
     void Update()
     {
         if (Time.timeScale <= 0f) return;
 
+        // Alterna automáticamente entre control por teclado y control por mouse según la última entrada detectada
         float entradaX = Input.GetAxisRaw("Horizontal");
 
         if (Mathf.Abs(entradaX) > 0.01f)
@@ -76,6 +84,7 @@ public class Player : MonoBehaviour
             nuevaPosicion.x += entradaX * velocidadMovimiento * Time.deltaTime;
         }
 
+        // Limita la coordenada X descontando la mitad del ancho actual de la paleta para que no atraviese las paredes
         float mitadAnchoReal = boxCollider != null ? boxCollider.bounds.extents.x : 1f;
         float bordeIzq = paredIzquierda != null ? paredIzquierda.bounds.max.x : limiteIzquierdoX;
         float bordeDer = paredDerecha != null ? paredDerecha.bounds.min.x : limiteDerechoX;
@@ -84,6 +93,7 @@ public class Player : MonoBehaviour
         transform.position = nuevaPosicion;
     }
 
+    // Expande horizontalmente la paleta; en niveles normales cancela el láser activo, mientras que en NivelCaos se acumulan
     public bool AgrandarPaleta()
     {
         bool esModoCaos = (SceneManager.GetActiveScene().name == "NivelCaos");
@@ -101,6 +111,7 @@ public class Player : MonoBehaviour
         return true;
     }
 
+    // Activa el disparo automático temporal de láseres; en niveles normales revierte el tamaño de la paleta
     public bool ActivarLaser()
     {
         bool esModoCaos = (SceneManager.GetActiveScene().name == "NivelCaos");
@@ -120,6 +131,7 @@ public class Player : MonoBehaviour
         return true;
     }
 
+    // Ejecuta el ciclo de disparos periódicos durante la duración establecida del power-up
     private IEnumerator EfectoLaser()
     {
         float tiempoTranscurrido = 0f;
@@ -133,6 +145,7 @@ public class Player : MonoBehaviour
         corrutinaLaser = null;
     }
 
+    // Instancia dos proyectiles láser en los extremos izquierdo y derecho de la paleta y reproduce su sonido
     private void DispararLaser()
     {
         if (prefabLaser != null)
@@ -153,12 +166,14 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Restaura la escala horizontal original de la paleta
     public void QuitarAgrandar()
     {
         estaAgrandada = false;
         transform.localScale = escalaOriginal;
     }
 
+    // Interrumpe inmediatamente la corrutina de disparo láser si se encuentra activa
     public void DetenerLaser()
     {
         if (corrutinaLaser != null)
@@ -168,6 +183,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Limpia todos los power-ups activos de la paleta al perder una vida
     public void ReiniciarEstadoPlayer()
     {
         QuitarAgrandar();
